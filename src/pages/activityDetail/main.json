@@ -1,0 +1,20 @@
+{
+    "navigationBarTitleText": "活动详情",
+    "enablePullDownRefresh": true,
+    "usingComponents": {
+      "i-tabs": "/static/view/tabs/index",
+      "i-tab": "/static/view/tab/index",
+      "i-panel": "/static/view/panel/index",
+      "i-row":"/static/view/row/index",
+      "i-col":"/static/view/col/index",
+      "i-button":"/static/view/button/index",
+      "i-tag": "/static/view/tag/index",
+      "i-count-down": "/static/view/count-down/index",
+      "i-modal": "/static/view/modal/index",
+      "i-icon":"/static/view/icon/index",
+      "i-input":"/static/view/input/index",
+      "van-field":"/static/vant/field/index",
+      "i-action-sheet":"/static/view/action-sheet/index"
+    }
+  }
+  

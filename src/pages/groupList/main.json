@@ -1,0 +1,15 @@
+{
+  "navigationBarTitleText": "参团列表",
+  "enablePullDownRefresh": false,
+  "usingComponents":{
+    "i-input": "/static/view/input/index",
+    "i-panel": "/static/view/panel/index",
+    "i-row": "/static/view/row/index",
+    "i-col": "/static/view/col/index",
+    "i-cell": "/static/view/cell/index",
+    "i-button": "/static/view/button/index",
+    "i-input-number": "/static/view/input-number/index",
+    "i-icon":"/static/view/icon/index",
+    "i-tag":"/static/view/tag/index"
+  }
+}

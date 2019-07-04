@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "学习历程",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "i-row": "/static/view/row/index",
+    "i-col": "/static/view/col/index",
+    "i-steps": "/static/view/steps/index",
+    "i-step": "/static/view/step/index"
+}
+}

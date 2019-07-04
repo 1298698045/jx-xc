@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "我的",
+  "navigationBarBackgroundColor": "#ff612c",
+  "navigationBarTextStyle": "white",
+  "usingComponents": {
+     "i-row": "/static/view/row/index",
+     "i-col": "/static/view/col/index",
+     "i-card": "/static/view/card/index",
+     "i-icon": "/static/view/icon/index",
+     "i-tag": "/static/view/tag/index",
+     "i-modal":"/static/view/modal/index"
+}
+}

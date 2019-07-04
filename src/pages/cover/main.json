@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "Aplus学车宝",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "i-input": "/static/view/input/index",
+    "i-card": "/static/view/card/index",
+    "i-icon": "/static/view/icon/index",
+    "i-message": "/static/view/message/index",
+    "i-row":"/static/view/row/index",
+    "i-col":"/static/view/col/index"
+}
+}

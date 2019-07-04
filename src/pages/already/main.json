@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "已约课程",
+  "usingComponents": {
+     "i-row": "/static/view/row/index",
+     "i-col": "/static/view/col/index",
+     "i-card": "/static/view/card/index",
+     "i-icon": "/static/view/icon/index",
+     "i-message": "/static/view/message/index",
+     "van-icon": "/static/vant/icon/index",
+     "i-button":"/static/view/button/index",
+     "i-modal":"/static/view/modal/index"
+}
+}

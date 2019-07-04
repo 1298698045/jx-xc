@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "我的活动",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "i-tabs": "/static/view/tabs/index",
+    "i-tab": "/static/view/tab/index",
+    "i-panel": "/static/view/panel/index",
+    "i-row":"/static/view/row/index",
+    "i-col":"/static/view/col/index",
+    "i-button":"/static/view/button/index",
+    "i-tag": "/static/view/tag/index",
+    "i-divider":"/static/view/divider/index"
+  }
+}

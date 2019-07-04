@@ -1,0 +1,9 @@
+{
+    "navigationBarTitleText": "报名意向",
+    "usingComponents": {
+        "i-input": "/static/view/input/index",
+        "i-card": "/static/view/card/index",
+        "i-icon": "/static/view/icon/index",
+        "i-button": "/static/view/button/index"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "navigationBarTitleText": "设置密码",
+    "enablePullDownRefresh": false,
+    "usingComponents": {
+      "i-input": "/static/view/input/index",
+      "i-card": "/static/view/card/index",
+      "i-icon": "/static/view/icon/index",
+      "i-radio-group": "/static/view/radio-group/index",
+      "i-radio": "/static/view/radio/index",
+      "van-field":"/static/vant/field/index",
+      "van-button":"/static/vant/button/index",
+      "i-modal":"/static/view/modal/index"
+    }
+  }

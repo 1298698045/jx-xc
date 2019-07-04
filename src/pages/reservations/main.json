@@ -1,0 +1,20 @@
+{
+    "navigationBarTitleText": "预约课程",
+    "enablePullDownRefresh": false,
+    "usingComponents":{
+      "i-input": "/static/view/input/index",
+      "i-panel": "/static/view/panel/index",
+      "i-row": "/static/view/row/index",
+      "i-col": "/static/view/col/index",
+      "i-cell": "/static/view/cell/index",
+      "i-button": "/static/view/button/index",
+      "i-input-number": "/static/view/input-number/index",
+      "i-con":"/static/view/icon/index",
+      "i-modal":"/static/view/modal/index",
+      "i-tabs":"/static/view/tabs/index",
+      "i-tab":"/static/view/tab/index",
+      "i-radio-group":"/static/view/radio-group/index",
+      "i-radio":"/static/view/radio/index",
+      "i-drawer": "/static/view/drawer/index"
+    }
+}
