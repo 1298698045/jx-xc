@@ -59,7 +59,7 @@
 export default {
     data(){
         return {
-            imgUrl:'http://aplusyx.oss-cn-beijing.aliyuncs.com/',
+            imgUrl:'http://oss-dev.aplusx.com/',
             scrollTop:"",
             imgList:[1,2,3,4,5,56,7,7,8,8],
             id:"",
@@ -77,7 +77,7 @@ export default {
     },
     methods: {
         getQuery(){
-            this.$httpWX.post({
+            this.$fetch.post({
                 url:this.$api.activity.list,
                 data:{
                     // id:this.id,

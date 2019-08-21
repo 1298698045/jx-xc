@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="wrap">
     <div class="header">
       <i-row>
         <i-col span="12">
@@ -34,31 +34,38 @@
           <i-steps i-class="steps" :current="verticalCurrent" direction="vertical">
             <i-step i-class="linecolor" icon=""  v-for="(item,index) in stepList" :key="index">
                 <view slot="title">
-                    <p class="ps" :class="index==0?'active':''">{{item.recordTime}}</p>
+                    <p class="ps" :class="index==0?'active':''">{{item.time}}</p>
                 </view>
-                <view slot="title" v-if="item.type=='REPORT'">
-                  <span>{{item.title}}</span>
+                <view slot="title" v-if="item.action=='COURSE_RECORD'">
+                  <span>{{item.kmValue}}</span>
+                  <span style="margin-left:20rpx;font-weight:200;">{{item.memos.startTime+'-'+item.memos.endTime}}</span>
                 </view>
-                <view slot="title"  v-if="item.type=='STUDY'">
+                <view slot="title"  v-if="item.action=='REPORT_FINISHED_DOCUMENT'">
                    <!-- v-if="item.type=='STUDY'"{{v=='已受理'?'':v}} -->
                    <!-- <span v-for="(v,i) in title[index]" :key="i" :class="i==1?'pactive':i==2?'pactive':''">{{v}}</span> -->
-                  <span v-for="(v,i) in title[index]" :key="i" :class="i==1?'pactive':i==2?'pactive':''">{{v}}</span>
+                  <span  :class="i==1?'pactive':i==2?'pactive':''">已受理</span>
                       <!-- {{item.title}} -->
                 </view>
-                <view slot="title" v-if="item.type=='EXAMINATION'">
-                  <span v-for="(v,i) in title[index]" :key="i" :class="i==1?'spans':''">{{v}}</span>
+                <view slot="title" v-if="item.action=='STUDENT_GRADE'">
+                  <span>{{item.memos.kmCode}}</span>
+                  <span  class="spans">{{item.memos.examScore}}</span>
                   <!-- {{item.title}} -->
                 </view>
-                <view slot="content" v-if="item.type=='EXAMINATION'">
+                <view slot="content" v-if="item.action=='COURSE_RECORD'">
                   <view class="stepdetails">
-                      <span style="color:black;">{{item.common}}</span>
+                      <span style="color:black;">{{item.memos.kmValue}}</span>
                   </view>
                 </view>
-                <view slot="content" v-if="item.type=='STUDY'">
+                <view slot="content" v-if="item.action=='COURSE_RECORD'">
                     <view class="stepdetails">
                       <view class="tipbtn" :class="item.common=='待签到'?'tipbtn_blue':''">待签到</view>
                       <view class="tipbtn" :class="item.common=='待签到;待确认'?'tipbtn_blue':''">待确认</view>
-                      <view class="tipbtn" :class="item.common=='待签到;待确认;已完成'?'tipbtn_blue':''">已完成</view>
+                      <view class="tipbtn" :class="item.memo.recordStatus==null?'tipbtn_blue':''">已完成</view>
+                  </view>
+                </view>
+                <view slot="content" v-if="item.action=='STUDENT_GRADE'">
+                    <view class="stepdetails">
+                      <view>{{item.memos.examResult==1?'通过':item.memos.examResult==2?'未通过':item.memos.examResult==3?'缺考':''}}</view>
                   </view>
                 </view>
             </i-step>
@@ -69,6 +76,8 @@
 
 <script>
 import { formatTime } from '@/utils/index'
+import { getDictValue } from '../../utils/public';
+import { getDictData } from '../../utils/util'
 
 export default {
   components: {
@@ -85,7 +94,9 @@ export default {
         days:'10',
         classtime:'66',
         current : 2,
-        verticalCurrent :0
+        verticalCurrent :0,
+        listData:[],
+        studentId:""
     }
   },
 
@@ -94,6 +105,11 @@ export default {
     this.logs = logs.map(log => formatTime(new Date(log)))
   },
   onLoad(options){
+    this.studentId = wx.getStorageSync('studentId');
+    getDictData().then(( dictionary )=>{
+      var that = this;
+      that.listData = dictionary;
+    })
     console.log(options);
     this.coursedCount = options.coursedCount;
     this.betweenDays = options.betweenDays;
@@ -105,20 +121,29 @@ export default {
       this.$httpWX.post({
         url:this.$api.my.studyHistory,
         data:{
-          studentId:wx.getStorageSync('studentId')
+          params:{
+            id:this.studentId
+          }
         }
       }).then(res=>{
         console.log(res);
-        this.stepList = res.content;
+        this.stepList = res.data.list;
         this.stepList.forEach(item=>{
-          // console.log(item.title.split(';'));
-          this.title.push(item.title.split(';'));
-          this.common.push(item.common.split(';'))
+          var time_str = item.createTime;
+          var newDate=/\d{4}-\d{1,2}-\d{1,2}/g.exec(time_str)
+          var documentedTime = newDate[0];
+          this.$set(item,'time',documentedTime);
+
+          console.log(item.memo);
+          var memo = item.memo!=""?JSON.parse(item.memo):'';
+          this.$set(item,'memos',memo);
+          console.log(memo);
+          var kmValue = getDictValue(this.listData,'km',memo.kmCode);
+          this.$set(item,'kmValue',kmValue);
+          // this.title.push(item.title.split(';'));
+          // this.common.push(item.common.split(';'))
         })
-        console.log(this.title);
-        this.title.forEach(item=>{
-          console.log(1,item);
-        })
+        console.log(this.stepList);
       })
     }
   },
@@ -167,6 +192,11 @@ export default {
 .icon-wodeyemian-lishi:before { content: "\e623"; }
 page{
   background:#fff;
+}
+.wrap{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 .header{
   width: 80%;

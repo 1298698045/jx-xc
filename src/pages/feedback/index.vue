@@ -4,6 +4,10 @@
             <textarea class="textarea" v-model="content"  name="textarea" placeholder="请输入反馈意见"  maxlength="300"></textarea>
             <span>{{contentSize}}/{{totalCount}}</span>
         </div>
+        <div class="inp-box">
+            <p>联系方式</p>
+            <i-input i-class="inp" type="text" :value="value" @change="getValue" placeholder="手机号/邮箱"></i-input>
+        </div>
         <button class="btn-cus-submit" @click="activeUpdSubmit">提交</button>
     </div>
 </template>
@@ -13,7 +17,8 @@ export default {
         return {
             content:"",
             totalCount: 300,
-            name:""
+            name:"",
+            value:""
         }
     },
     computed: {
@@ -28,6 +33,9 @@ export default {
         this.name = options.name;
     },
     methods:{
+        getValue(e){
+            console.log(e);
+        },
         activeUpdSubmit () {
             if (this.content === '') {
                 wx.showToast({
@@ -39,22 +47,22 @@ export default {
             }
             let url = this.$api.my.addOrUpdate;
             let params = {
-                content: this.content,
-                source: 'STUDYCAR',
-                status: 'UNHANDLE',
-                feedbackName: this.name,
-                feedbackPhone: wx.getStorageSync('telphone'),
-                schoolId: wx.getStorageSync('schoolId'),
+                params:{
+                    openid:wx.getStorageSync('openid'),
+                    platform:"jx_student_app",
+                    contact:wx.getStorageSync('mobile'),
+                    message:this.content
+                }
             }
             this.$httpWX.post({
                 url,
                 data: params
             }).then(res => {
                 wx.showToast({
-                    title: res.msg,
+                    title: res.data,
                     duration: 2000,
                     success: () => {
-                        if (res.code * 1 === 200) {
+                        if (res.code == 0) {
                             setTimeout(() => {
                                 wx.switchTab({url:'/pages/my/main'})
                             }, 1000);
@@ -92,6 +100,13 @@ export default {
         margin-right:10px;
     }
     
+}
+.inp-box{
+    width: 347px;
+	margin: 10px auto 24px;
+    .inp{
+        border-radius:6px;
+    }
 }
 .btn-cus-submit{
   width:480rpx;

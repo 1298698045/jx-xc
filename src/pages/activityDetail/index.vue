@@ -220,7 +220,7 @@ export default {
         return {
             mode:"",
             detail:{},
-            imgUrl:'http://aplusyx.oss-cn-beijing.aliyuncs.com/',
+            imgUrl:'http://oss-dev.aplusx.com/',
             targetTime: 21038240918,
             myFormat: ['时', '分', '秒'],
             myFormat1: ['天', '时', '分', '秒'],
@@ -279,13 +279,14 @@ export default {
             success(res){
                 if(res.code){
                     const code = res.code;
-                    that.$httpWX.get({
+                    that.$fetch.get({
                         url:that.$api.home.getOpenid+"/"+code,
                         data:{
-                            
+                            params:{
+                                code:res.code
+                            }
                         }
                     }).then(res=>{
-                        console.log("crtead:",res);
                         that.openid = res.content.openid;
                         wx.setStorageSync('openid',that.openid)
                     })
@@ -295,6 +296,7 @@ export default {
     },
     onLoad(options){
         // wx.hideShareMenu() // 页面转发
+        this.detail = {};
         this.login().then(()=>{
             this.queryDetail();
         });
@@ -327,7 +329,7 @@ export default {
                     openid:wx.getStorageSync('openid')
                 }
                 console.log('coachForward',coachForward);
-                this.$httpWX.post({
+                this.$fetch.post({
                     url:this.$api.activity.statistics,
                     data:coachForward
                 }).then(res=>{
@@ -393,7 +395,7 @@ export default {
                     success(res) {
                         if(res.code){
                             const code = res.code;
-                            that.$httpWX.get({
+                            that.$fetch.get({
                                 url:that.$api.home.getOpenid+"/"+code,
                                 data:{
     
@@ -479,11 +481,10 @@ export default {
         queryDetail(){
             this.param.openid = this.openid;
             console.log(this.param);
-            this.$httpWX.post({
+            this.$fetch.post({
                 url:this.$api.activity.detail,
                 data:this.param
             }).then(res=>{
-                console.log(11111111111,res);
                 this.detail = res.content;
                 this.detail.overStatus==0?this.endModal = true:this.endModal=false;
                 this.detail.overStatus==0?this.disabled = true:this.disabled=false;
@@ -543,7 +544,7 @@ export default {
             }else {
                 console.log(this.openid);
                 if(this.num)
-                this.$httpWX.post({
+                this.$fetch.post({
                     url:this.$api.activity.saveUser,
                     data:{
                         openid:this.openid,
@@ -564,7 +565,7 @@ export default {
                         if(this.num=='0'){
                             console.log('开团',this.openid,this.detail.id,this.contInfo.employeeId,this.userPhone,this.contInfo.schoolId)
                             // 开团
-                            this.$httpWX.post({
+                            this.$fetch.post({
                                 url:this.$api.activity.saveGroupDoc,
                                 data:{
                                     openid:this.openid,
@@ -646,7 +647,7 @@ export default {
         // 立即参团
         getParticipate(){
             console.log('参数:',this.openid,this.id,this.userPhone)
-            this.$httpWX.post({
+            this.$fetch.post({
                 url:this.$api.activity.joinGroup,
                 data:{
                     openid:this.openid,
@@ -691,7 +692,7 @@ export default {
         }
         var coach = JSON.stringify(coachForward);
         console.log('coachForward',coachForward);
-        this.$httpWX.post({
+        this.$fetch.post({
             url:this.$api.activity.statistics,
             data:coachForward
         }).then(res=>{

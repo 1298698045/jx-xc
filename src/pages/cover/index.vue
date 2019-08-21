@@ -126,16 +126,8 @@ export default {
       openid:""  // 用户唯一标识
     };
   },
-
-  created() {
-    console.log('created')
-    const logs = wx.getStorageSync("logs") || [];
-  },
   onLoad(){
-   console.log('onload')
-  },
-  onShow(){
-    console.log('onShow')
+    
   },
   methods: {
     changeAutoplay(e) {
@@ -184,7 +176,7 @@ export default {
         success(res){
           if(res.code){
                 const code = res.code;
-                that.$httpWX.get({
+                that.$fetch.get({
                     url:that.$api.home.getOpenid+"/"+code,
                     data:{
 

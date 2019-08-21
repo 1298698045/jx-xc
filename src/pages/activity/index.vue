@@ -17,7 +17,7 @@
                         <div class="colLeft">
                             <image :src="imgUrl+item.pictureUrl" alt=""></image>
                             <!-- <p v-if="current!='tab2'" class="icon">团购</p> -->
-                            <i-tag  v-if="item.type=='REDUCTION'" i-class="icon" name="团购"  color="#fb6809">
+                            <i-tag  i-class="icon" name="团购"  color="#fb6809">
                                 团购
                             </i-tag>
                             <p class="pactive">{{item.docStatus=="ACTIVE"?"进行中~":'已结束'}}</p>
@@ -25,17 +25,25 @@
                     </i-col>
                     <i-col span="15" i-class="colRight">
                         <h3>{{item.name}}</h3>
-                        <div class="box">
+                        <div class="box" v-if="item.type=='REDUCTION'">
                             <p>最低：<span style="font-weight:bold;">{{item.price-item.discountsRestrictions}}</span> </p>
                             <p style="text-decoration:line-through;margin:5rpx 10rpx;color:#979797;font-size:20rpx;">原价{{item.price}}</p>
                             <p style="margin-left:10rpx;">现价: <span style="font-weight:bold;">{{item.realMoney || ''}}</span> </p>
+                        </div>
+                        <div class="box" v-if="item.type=='COMMON'">
+                            <p>团购价：<span style="font-weight:bold;">{{item.discountsRestrictions}}</span> </p>
+                            <p style="text-decoration:line-through;margin:5rpx 10rpx;color:#979797;font-size:20rpx;">原价{{item.price}}</p>
+                            <p style="margin-left:10rpx;"><span style="font-weight:bold;">{{item.peopleRestrictions}}</span>人团</p>
                         </div>
                         <p style="font-size:20rpx;color:#979797;">活动归属：{{item.schoolName}}</p>
                     </i-col>
                 </i-row>
                 <div class="bottom">
-                    <p style="margin-top:8rpx;color:#979797;font-size:20rpx;">参团数：
+                    <p style="margin-top:8rpx;color:#979797;font-size:20rpx;" v-if="item.type=='REDUCTION'">参团数：
                         <span style="color:#fb6809;font-weight:bold;">{{item.joinGroupUserNum || ''}}</span></p>
+
+                    <p style="margin-top:8rpx;color:#979797;font-size:20rpx;" v-if="item.type=='COMMON'">还差：
+                        <span style="color:#fb6809;font-weight:bold;">{{item.peopleRestrictions-item.joinGroupUserNum}}</span>人</p>
                     <!-- <p style="color:red;margin-top:8rpx;">{{item.docStatus=="ACTIVE"?"进行中~":'已结束'}}</p> -->
                     <i-button i-class="ibtn" type="primary"  @click="getRouter(item)">查看详情</i-button>
                 </div>
@@ -48,7 +56,7 @@
 export default {
     data(){
         return {
-            imgUrl:'http://aplusyx.oss-cn-beijing.aliyuncs.com/',
+            imgUrl:'http://oss-dev.aplusx.com/',
             pageNo:1,
             pageSize:5,
             current:'tab1',
@@ -74,7 +82,7 @@ export default {
     },
     methods: {
         getQuery(){
-            this.$httpWX.post({
+            this.$fetch.post({
                 url:this.$api.activity.myGroups,
                 data:{
                     openid:wx.getStorageSync('openid'),

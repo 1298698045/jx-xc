@@ -3,7 +3,9 @@ import App from './App'
 import "../static/weui/weui.wxss"
 
 import WXrequest from './utils/wx-request'
+import fetch from './utils/request'
 Vue.prototype.$httpWX = WXrequest
+Vue.prototype.$fetch = fetch
 import api from './utils/interface'
 Vue.prototype.$api = api;
 

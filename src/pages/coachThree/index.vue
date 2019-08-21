@@ -6,13 +6,13 @@
         <div class="wrap">
             <div class="center">
               <div class="navHeader">
-                <picker @change="bindPickerChange" v-model="index" range-key="name" :range="array">
+                <picker @change="bindPickerChange" v-model="index" range-key="title" :range="array">
                   <i-row i-class="rows">
                     <i-col span="6">
                       <p style="color: #bfbfbf;">选择训练场</p>
                     </i-col>
                     <i-col span="12">
-                      <p style="text-align:center;">{{array[index].name}}</p>
+                      <p style="text-align:center;">{{array[index].title}}</p>
                     </i-col>
                     <i-col span="6">
                       <p style="text-align:right;">
@@ -22,34 +22,15 @@
                   </i-row>
                 </picker>
               </div>
-              
-
-                <!-- <div class="boxWrap">
-                  <i-row @click="getShow">
-                    <i-col span="12">
-                      <p>{{all}}</p>
-                    </i-col>
-                    <i-col span="12">
-                        <h3>
-                          <picker @change="bindPickerChange" :value="index" :range="array" range-key="provinceCode_label">
-                            <i-icon type="enter" size="24"></i-icon>
-                            <P>{{array[index].name}}</p>
-                          </picker>
-                          
-                          <i-icon type="enter" size="24"></i-icon>
-                        </h3>
-                    </i-col>
-                  </i-row>
-                </div> -->
                 <div class="row" v-for="(item,index) in list" :key="index" @click="getCoach(item,index)">
                     <i-row>
                         <i-col span="5">
-                          <image v-if="item.sex=='XB001'" src="/static/images/man.png" style="width:46px;height:46px;vertical-align:middle;margin-left:36rpx;"></image>
+                          <image src="/static/images/man.png" style="width:46px;height:46px;vertical-align:middle;margin-left:36rpx;"></image>
                           <image v-if="item.sex=='XB002'" src="/static/images/gril.png" style="width:46px;height:46px;vertical-align:middle;margin-left:36rpx;"></image>
                         </i-col>
                         <i-col i-class="left" span="12">
                           <p style="text-align:left;margin-left:10rpx;margin-top:5rpx;">{{item.name}}</p>
-                          <p style="text-align:left;margin-left:10rpx;font-size: 14px;color: #979797;">{{item.teachSubject=='JXKM001'?'科目二':item.teachSubject=='JXKM002'?'科目三':item.teachSubject=='JXKM003'?'科目二、科目三':''}}</p>
+                          <p style="text-align:left;margin-left:10rpx;font-size: 14px;color: #979797;">{{item.kmValue}}</p>
                         </i-col>
                         <i-col span="6" i-class="txt-right">
                           <p class="icon-success" :style="{'background': number==index?'#fb7117':'#d1d1d1'}">
@@ -99,9 +80,12 @@
     </div>
 </template>
 <script>
+import { getDictValue } from '../../utils/public';
+import { getDictData } from '../../utils/util'
 export default {
   data() {
     return {
+      studentId:"",
       index:0,
       number: -1,
       userId:'',
@@ -126,20 +110,20 @@ export default {
       isModal:false,
       id:"",
       nameCoach:"",
-      subject:""
+      subject:"",
+      listData:[],
+      siteId:"",
+      coachId:""
     };
   },
   onLoad(options){
-    this.teachPermitted = wx.getStorageSync('teachPermitted');
+    this.studentId = wx.getStorageSync('studentId');
+    getDictData().then(( dictionary )=>{
+      var that = this;
+      that.listData = dictionary;
+    })
     this.getAllField();
-    console.log(options);
-    this.departmentCode = options.departmentCode;
-    this.reportId = options.reportId;
-    this.userId = options.userId;
-    //console.log(options.userId);
-    // this.getDetail();
-    this.getContractRules();
-    // this.getQuery();
+    this.getQuery();
   },
   created() {
   },
@@ -152,12 +136,14 @@ export default {
       this.$httpWX.post({
         url:this.$api.coach.querySite,
         data:{
-          status:"CDZT01"
+          params:{
+            status:1
+          }
         }
       }).then(res=>{
         console.log(res);
-        this.array = res.content;
-        this.array.unshift({name:"全部训练场"});
+        this.array = res.data.list;
+        this.array.unshift({title:"全部训练场"});
       })
     },
     // 选择训练场查询教练
@@ -182,44 +168,32 @@ export default {
       })
     },
     bindPickerChange(e){
-      console.log(e);
       this.index = e.mp.detail.value;
       let index = e.mp.detail.value;
       let id = this.array[index].id;
-        this.$httpWX.post({
-        url:this.$api.coach.queryAllCoach,
-        data:{
-          coachFlag:'1',
-          status:'YGZT01',
-          // belongSliceCode:this.departmentCode,
-          maxBookedEnable:this.maxBookedEnable,
-          subject:"JXKM002",
-          carSiteId:id,
-          teachPermitted:this.teachPermitted
-        }
-      }).then(res=>{
-        this.list = res.content;
-        this.isShow = false;
-      })
+      this.siteId = this.array[index].id;
+      this.getQuery();
     },
     // 查询教练
     getQuery(){
+      if(this.index!=0){
+        var params = {
+          siteId:this.siteId
+        }
+      }else {
+        params = {};
+      }
       this.$httpWX.post({
         url:this.$api.coach.queryAllCoach,
         data:{
-          coachFlag:'1',
-          status:'YGZT01',
-          // belongSliceCode:this.departmentCode,
-          maxBookedEnable:this.maxBookedEnable,
-          subject:"JXKM002",
-          teachPermitted:this.teachPermitted
-          // classTypeId:wx.getStorageSync('classTypeId')
+          params:params
         }
       }).then(res=>{
-        //console.log('1',res);
-        this.list = res.content;
-      }).catch(err=>{
-        //console.log(err)
+        this.list = res.data.list;
+        this.list.forEach(item=>{
+          var kmValue = getDictValue(this.listData,'coach_km',item.teachKm)
+          this.$set(item,'kmValue',kmValue);
+        })
       })
     },
     // 我的
@@ -270,25 +244,29 @@ export default {
       this.isModal = false;
     },
     getOk() {
-      // this.number = index;
-      //console.log(id);
-      this.$httpWX.get({
-        url:this.$api.coach.changeCoach + "/" + this.reportId +'/' + this.id + '/' + 'KM003',
+      this.$httpWX.post({
+        url:this.$api.coach.changeCoach,
         data:{
-
+          params:{
+            id:this.studentId,
+            km3CoachId:this.coachId
+          }
         }
       }).then(res=>{
         this.isModal = false;
-        if(res.status.code * 1 === 10){
-          wx.switchTab({
-            url: "/pages/already/main"
-          });
-        }
-        // this.getDetail().then(()=>{
-        //   wx.switchTab({
-        //     url: "/pages/already/main"
-        //   });
-        // });
+        wx.showToast({
+          title: '成功',
+          icon: 'success',
+          duration: 2000,
+          success:()=>{
+            if(res.code==0){
+              setTimeout(()=>{
+                const url = '/pages/already/main'
+                 wx.switchTab({url:url});
+              },1000)
+            }
+          }
+        })
       })
     },
     // 选好了
@@ -300,6 +278,7 @@ export default {
       }
     },
     getCoach(item,index){
+      this.coachId = item.employeeId;
       this.number = index;
       this.id = item.id;
       this.nameCoach = item.name;

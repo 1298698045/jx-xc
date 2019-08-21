@@ -1,5 +1,5 @@
 {
-    "navigationBarTitleText": "Aplus学车宝",
+    "navigationBarTitleText": "易驾",
     "enablePullDownRefresh": false,
     "usingComponents": {
       "i-input": "/static/view/input/index",
@@ -9,6 +9,8 @@
       "i-radio": "/static/view/radio/index",
       "van-field":"/static/vant/field/index",
       "van-button":"/static/vant/button/index",
-      "i-modal":"/static/view/modal/index"
+      "i-modal":"/static/view/modal/index",
+      "i-divider":"/static/view/divider/index",
+      "i-message":"/static/view/message/index"
     }
   }

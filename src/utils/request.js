@@ -1,7 +1,5 @@
-// const host = 'https://test.api.aplusx.com/apijx' // 测试环境
-// const host = 'http://192.168.1.221:8185' // 开发环境
-// const host =  'https://api.aplusx.com/jiaxiao' // 正式环境
-const host = 'https://jxapitest.aplusx.com';
+const host = 'https://jxactivetest.aplusx.com'
+ 
 function request (url, method, data, header = {}) {
   wx.showLoading({
     title: '加载中' // 数据请求前loading
@@ -13,8 +11,9 @@ function request (url, method, data, header = {}) {
       data: data,
       header: {
         'content-type': 'application/json', // 默认值
-        'token': wx.getStorageSync('token'),
+        // 'token':wx.getStorageSync('token'),
         'platform':'studentApp'
+        // 'service-pre':wx.getStorageSync("schoolId")
       },
       success: function (res) {
         wx.hideLoading()
@@ -38,10 +37,15 @@ function get (obj) {
 function post (obj) {
   return request(obj.url, 'POST', obj.data)
 }
+
+function DELETE (obj) {
+  return request(obj.url, 'DELETE', obj.data)
+}
  
 export default {
   request,
   get,
   post,
+  DELETE,
   host
 }

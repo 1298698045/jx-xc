@@ -1,0 +1,14 @@
+{
+    "navigationBarTitleText": "批量预约",
+    "usingComponents": {
+        "i-row": "/static/view/row/index",
+        "i-col": "/static/view/col/index",
+        "i-card": "/static/view/card/index",
+        "i-icon": "/static/view/icon/index",
+        "i-tag": "/static/view/tag/index",
+        "i-modal": "/static/view/modal/index",
+        "i-button": "/static/view/button/index",
+        "i-checkbox-group":"/static/view/checkbox-group/index",
+        "i-checkbox":"/static/view/checkbox/index"
+    }
+}

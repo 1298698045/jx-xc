@@ -4,50 +4,50 @@
         <div class="header">
           <i-row>
             <i-col span="5">
-              <!-- <i-icon type="businesscard" size="28" color="blue"/> -->
               <div style="text-align:center;">
                 <image src="/static/images/username-default.png" style="width:45px;height:45px;"></image>
-                <!-- <image v-if="sex=='XB002'" src="/static/images/gril.png" style="width:45px;height:45px;"></image> -->
               </div>
             </i-col>
             <i-col span="12">
-              <p style="font-size:16px;">{{name}}</p>
-              <p style="font-size:12px;">受理时间：<text>{{time}}</text></p>
+              <p style="font-size:16px;">{{name || '未报名学车'}}</p>
+              <p style="font-size:12px;">受理时间：<text>{{documentedTime || '暂无'}}</text></p>
             </i-col>
             <i-col span="7" @click="inforRoute">
               <p style="line-height:50px;">
                 <i-icon type="createtask" size="28" color="#fff" />
                 学习历程</p>
             </i-col>
-            <!-- <i-col span="6">
-              <i class="iconfont icon-wodeyemian-lishi" style="color:#ff3f00;display:inline-block;margin-left:33px;margin-top:8rpx;"></i>
-              <span style="font-size:24rpx;margin-left:5rpx;">{{betweenDays}}天</span>
-            </i-col>
-            <i-col span="4">
-              <i class="iconfont icon-wodeyemian-wancheng" style="color:#ff3f00;display:inline-block;margin-left:20rpx;margin-top:8rpx;"></i>
-              <span style="font-size:24rpx;">{{coursedCount}}课时</span></view>
-            </i-col> -->
           </i-row>
+          <i-row i-class="adressRow" v-if="isSchool">
+            <i-col span="5">&nbsp;</i-col>
+            <i-col span="12">
+              <p>归属驾校:{{schoolAdress}}</p>
+            </i-col>
+            <i-col span="7">
+              <p class="btn" @click="replaceSchool">更换驾校</p>
+            </i-col>
+          </i-row>
+         
         </div>
        <div class="boxCont">
           <div class="navCenter">
             <i-row>
-              <i-col span="12">
+              <i-col span="10">
                 <p style="font-weight:bold;">我的课时</p>
               </i-col>
-              <i-col span="6">
+              <i-col span="7">
                 <p style="font-size:12px;color: #ababab;">
-                  已学天数：<span style="color:#fb6d11;font-weight:bold;">{{betweenDays}}</span>
+                  已学天数：<span style="color:#fb6d11;font-weight:bold;">{{betweenDays || '暂无'}}</span>
                 </p>
               </i-col>
-              <i-col span="6">
+              <i-col span="7">
                 <p  style="font-size:12px;color: #ababab;">
-                  已上课时：<span style="color:#fb6d11;font-weight:bold;">{{coursedCount}}</span>
+                  已上课时：<span style="color:#fb6d11;font-weight:bold;">{{coursedCount || '暂无'}}</span>
                 </p>
               </i-col>
             </i-row>
-            <p style="padding:20rpx 0 10rpx 0;color:#a4a4a4;">科目二：<span style="color: #fb6809;margin-left:20rpx;">{{partTwoHours==null?'无限':partTwoHours}}课时</span></p>
-            <p style="color:#a4a4a4;">科目三：<span  style="color: #fb6809;margin-left:20rpx;">{{partThreeHours==null?'无限':partThreeHours}}课时</span></p>
+            <p style="padding:20rpx 0 10rpx 0;color:#a4a4a4;">科目二：<span style="color: #fb6809;margin-left:20rpx;">{{partTwoHours==-1?'无限':partTwoHours || '暂无'}}课时</span></p>
+            <p style="color:#a4a4a4;">科目三：<span  style="color: #fb6809;margin-left:20rpx;">{{partThreeHours==-1?'无限':partThreeHours || '暂无'}}课时</span></p>
           </div>
         </div>
         <div class="sppedCont">
@@ -55,41 +55,39 @@
             <div class="rowSp">
               <p class="tName">我的进度</p>
               <p class="icn">
-                {{type=="PXLX001"?'A1':type=="PXLX002"?'A2':type=="PXLX003"?'A3':type=="PXLX004"?'B1':type=="PXLX005"?'B2':type=="PXLX006"?'C1':type=="PXLX007"?'C2':type=="PXLX008"?'C3':type=="PXLX009"?'C4':type=="PXLX0010"?'C5':
-                  type=="PXLX0011"?'D':type=="PXLX0012"?'E':type=="PXLX0013"?'F':type=="PXLX0014"?'M':type=="PXLX0015"?'N':type=="PXLX0016"?'P':''}}
+                {{type || '暂无'}}
               </p>
             </div>
             <p class="title" @click="getRouter">
-              {{type=="PXLX001"?'A1':type=="PXLX002"?'A2':type=="PXLX003"?'A3':type=="PXLX004"?'B1':type=="PXLX005"?'B2':type=="PXLX006"?'C1':type=="PXLX007"?'C2':type=="PXLX008"?'C3':type=="PXLX009"?'C4':type=="PXLX0010"?'C5':
-                type=="PXLX0011"?'D':type=="PXLX0012"?'E':type=="PXLX0013"?'F':type=="PXLX0014"?'M':type=="PXLX0015"?'N':type=="PXLX0016"?'P':''}}{{classTypeName}}
+              {{classTitle || '暂无'}}
                 <i-icon i-clss="icons" type="enterinto_fill" size="24" color="#fb6809" />
             </p>
             <div class="carBoxWrap">  
               <div class="carBox">
                 <div class="img">
-                  <img v-if="partOneStatus=='KM001-XXJD003'" src="/static/images/subject-grey.png" alt="">
-                  <img v-if="partOneStatus!='KM001-XXJD003'" src="/static/images/subject-active.png" alt="">
+                  <img v-if="km1Status=='0'" src="/static/images/subject-grey.png" alt="">
+                  <img v-if="km1Status!='0'" src="/static/images/subject-active.png" alt="">
                 </div>
-                <span :class="partOneStatus=='KM001-XXJD003'?'':'active'"></span>
+                <span :class="km1Status=='0'?'':'active'"></span>
               </div>
               <div class="carBox">
                 <div class="img">
-                  <img v-if="partTwoStatus=='KM002-XXJD001'"  src="/static/images/subject-grey.png" alt="">
-                  <img v-if="partTwoStatus!='KM002-XXJD001'"  src="/static/images/subject-active.png" alt="">
+                  <img v-if="km2Status=='0'"  src="/static/images/subject-grey.png" alt="">
+                  <img v-if="km2Status!='0'"  src="/static/images/subject-active.png" alt="">
                 </div>
-                <span :class="partTwoStatus=='KM002-XXJD001'?'':'active'"></span>
+                <span :class="km2Status=='0'?'':'active'"></span>
               </div>
               <div class="carBox">
                 <div class="img">
-                  <img v-if="partThreeStatus=='KM003-XXJD001'"  src="/static/images/subject-grey.png" alt="">
-                  <img v-if="partThreeStatus!='KM003-XXJD001'"  src="/static/images/subject-active.png" alt="">
+                  <img v-if="km3Status=='0'"  src="/static/images/subject-grey.png" alt="">
+                  <img v-if="km3Status!='0'"  src="/static/images/subject-active.png" alt="">
                 </div>
-                <span :class="partThreeStatus=='KM003-XXJD001'?'':'active'"></span>
+                <span :class="km3Status=='0'?'':'active'"></span>
               </div>
               <div class="carBox">
                 <div class="img">
-                  <img v-if="partFourStatus=='KM004-XXJD003'" src="/static/images/subject-grey.png" alt="">
-                  <img v-if="partFourStatus!='KM004-XXJD003'" src="/static/images/subject-active.png" alt="">
+                  <img v-if="km4Status=='0'" src="/static/images/subject-grey.png" alt="">
+                  <img v-if="km4Status!='0'" src="/static/images/subject-active.png" alt="">
                 </div>
               </div>
             </div>
@@ -97,26 +95,26 @@
             <div class="tWrap">
               <div class="text">
                 <p style="font-size: 14px;color: #4f4f4f;">科目一</p>
-                <p :class="partOneStatus=='KM001-XXJD001'?'org':partOneStatus=='KM001-XXJD002'?'greenText':'tcolor'">
-                  {{partOneStatus=='KM001-XXJD001'?'本校进行中':partOneStatus=='KM001-XXJD002'?'已完成':partOneStatus=='KM001-XXJD003'?'待激活':''}}
+                <p :class="km1Status=='1'||km1Status=='2'?'org':km1Status=='9'?'greenText':'tcolor'">
+                  {{km1Value}}
                 </p>
               </div>
               <div class="text">
                 <p style="font-size: 14px;color: #4f4f4f;">科目二</p>
-                <p :class="partTwoStatus=='KM002-XXJD001'?'tcolor':partTwoStatus=='KM002-XXJD002'?'org':partTwoStatus=='KM002-XXJD003'?'org':partTwoStatus=='KM002-XXJD004'?'greenText':''">
-                  {{partTwoStatus=='KM002-XXJD001'?'待激活':partTwoStatus=='KM002-XXJD002'?'本校进行中':partTwoStatus=='KM002-XXJD003'?'委培进行中':partTwoStatus=='KM002-XXJD004'?'已完成':''}}
+                <p :class="km2Status=='0'?'tcolor':km1Status=='1'||km1Status=='2'?'org':km1Status=='9'?'greenText':''">
+                  {{km2Value}}
                 </p>
               </div>
               <div class="text">
                 <p style="font-size: 14px;color: #4f4f4f;">科目三</p>
-                <p :class="partThreeStatus=='KM003-XXJD001'?'tcolor':partThreeStatus=='KM003-XXJD002'?'org':partThreeStatus=='KM003-XXJD003'?'greenText':partThreeStatus=='KM003-XXJD004'?'org':''">
-                  {{partThreeStatus=='KM003-XXJD001'?'待激活':partThreeStatus=='KM003-XXJD002'?'本校进行中':partThreeStatus=='KM003-XXJD003'?'已完成':partThreeStatus=='KM003-XXJD004'?'委培进行中':''}}
+                <p :class="km3Status=='0'?'tcolor':km3Status=='1'||km3Status=='2'?'org':km3Status=='9'?'greenText':''">
+                  {{km3Value}}
                 </p>
               </div>
               <div class="text">
                 <p style="font-size: 14px;color: #4f4f4f;">科目四</p>
-                <p :class="partFourStatus=='KM004-XXJD001'?'org':partFourStatus=='KM004-XXJD002'?'greenText':partFourStatus=='KM004-XXJD003'?'tcolor':''">
-                  {{partFourStatus=='KM004-XXJD001'?'本校进行中':partFourStatus=='KM004-XXJD002'?'已完成':partFourStatus=='KM004-XXJD003'?'待激活':''}}
+                <p :class="km4Status=='1'||km4Status=='2'?'org':km4Status=='9'?'greenText':km4Status=='0'?'tcolor':''">
+                  {{km4Value}}
                 </p>
               </div>
             </div>
@@ -139,98 +137,58 @@
         客服电话：<span style="font-size: 16px;color: #fb6809;">400-222-3345</span>
       </div> -->
       
-      <div class="footer">
+      <!-- <div class="footer">
         <button class="quitBtn" @click="quitOut">退出登录</button>
-      </div>
+      </div> -->
 
-      <i-modal i-class="modal" :visible="isModal" @ok="getOk" @cancel="getCanel">
+      <i-modal i-class="modal" :visible="isModal" @ok="getOk(0)" @cancel="getCanel(0)">
         <div>
           <i-icon type="remind_fill" size="28" color="#fb6809" />
           <span>提示</span>
         </div>
         <p>确定要退出登录吗?</p>
       </i-modal>
-        <!-- <div class="contents">
-          <div class="card-box">
-            <p style="padding:40rpx 30rpx;">剩余课时：<span style="font-weight:bold;">科目二{{partTwoHours==null?'无限':partTwoHours}}课时，科目三{{partThreeHours==null?'无限':partThreeHours}}课时</span></p>
-          </div>
-          <div class="card-box">
-            <i-row i-class="row-class">
-              <i-col span="12" i-class="border-right">
-                <image class="imgIcon" src="/static/images/car1.png"></image>{{type=="PXLX001"?'A1':type=="PXLX002"?'A2':type=="PXLX003"?'A3':type=="PXLX004"?'B1':type=="PXLX005"?'B2':type=="PXLX006"?'C1':type=="PXLX007"?'C2':type=="PXLX008"?'C3':type=="PXLX009"?'C4':type=="PXLX0010"?'C5':
-                type=="PXLX0011"?'D':type=="PXLX0012"?'E':type=="PXLX0013"?'F':type=="PXLX0014"?'M':type=="PXLX0015"?'N':type=="PXLX0016"?'P':''}}
-              </i-col>
-              <i-col span="12" i-class="right-col" @click="getRouter">
-                <image class="imgIcon" src="/static/images/class1.png"></image>
-                {{classTypeName}}
-              </i-col>
-            </i-row>
-            <i-row i-class="row-class">
-              <i-col span="12" i-class="border-right">
-                <image class="imgIcon" src="/static/images/study1.png"></image>
-                {{partOneStatus=='KM001-XXJD001'?'科目一（本校进行中）':partOneStatus=='KM001-XXJD002'?'科目一（已完成）':partOneStatus=='KM001-XXJD003'?'科目一（待激活）':'科目一'}}
-              </i-col>
-              <i-col span="12" i-class="right-col">
-                <image class="imgIcon" src="/static/images/study1.png"></image>
-                {{partTwoStatus=='KM002-XXJD001'?'科目二（待激活）':partTwoStatus=='KM002-XXJD002'?'科目二（本校进行中）':partTwoStatus=='KM002-XXJD003'?'科目二（委培进行中）':partTwoStatus=='KM002-XXJD004'?'科目二（已完成）':'科目二'}}
-              </i-col> -->
-              <!-- <i-col span="12" i-class="right-col">
-                <image class="imgIcon" src="/static/images/time.png"></image>
-                完成课时：{{classtime}}小时
-              </i-col> -->
-            <!-- </i-row>
-            <i-row i-class="row-class">
-              <i-col span="12" i-class="border-right">
-                <image class="imgIcon" src="/static/images/study1.png"></image>
-                {{partThreeStatus=='KM003-XXJD001'?'科目三（待激活）':partThreeStatus=='KM003-XXJD002'?'科目三（本校进行中）':partThreeStatus=='KM003-XXJD003'?'科目三（已完成）':partThreeStatus=='KM003-XXJD004'?'科目三（委培进行中）':'科目三'}}
-              </i-col>
-              <i-col span="12" i-class="right-col">
-                <image class="imgIcon" src="/static/images/study1.png"></image>
-                {{partFourStatus=='KM004-XXJD001'?'科目四（本校进行中）':partFourStatus=='KM004-XXJD002'?'科目四（已完成）':partFourStatus=='KM004-XXJD003'?'科目四（待激活）':'科目四'}}
-              </i-col>
-            </i-row> -->
-            <!-- <i-row i-class="row-class">
-              <i-col span="12" i-class="border-right">
-                <image class="imgIcon" src="/static/images/car.png"></image>
-                {{send}}
-              </i-col>
-            </i-row> -->
-          <!-- </div>
-          <div class="card-box box-bg" @click="inforRoute">
-            <image src="/static/images/course_img.png" class="imgItem"></image>
-            <div class="imgText"><a>学习历程</a></div>
-          </div> -->
-          <!-- 暂时去掉 -->
-          <!-- <div class="card-box box-bg">
-            <image src="/static/images/infor_img.png" class="imgItem"></image>
-            <div class="imgText"><a href="">资讯文章</a></div>
-          </div> -->
-          <!-- <div class="card-box">
-            <i-row i-class="row-class" @click="customerPhone">
-              <i-col span="22">客服电话（08:00-18:00）</i-col>
-            </i-row> -->
-            <!-- 暂时去掉 -->
-            <!-- <i-row i-class="row-class" @click="complaintPhone">
-              <i-col span="22">投诉建议（08:00-18:00）</i-col>
-            </i-row>
-            <i-row i-class="row-class">
-              <i-col span="22">用户协议</i-col>
-              <i-col span="2"><i-icon type="enter" /></i-col>
-            </i-row> -->
-            <!-- <i-row i-class="row-class">
-              <i-col span="22" @click="quitOut">退出登录</i-col>
-              <i-col span="2"><i-icon type="enter" /></i-col>
-            </i-row>
-          </div>
-        </div> -->
+
+      <i-modal i-class="modal" :visible="bindModal" @ok="getOk(1)" @cancel="getCanel(1)">
+        <div>
+          <span>绑定驾校</span>
+        </div>
+        <div class="boxRow">
+          <i-row i-class="row">
+            <i-col span="7">
+              <p>当前驾校：</p>
+            </i-col>
+            <i-col span="17">
+              <p><span>{{schoolAdress || '无'}}</span></p>
+            </i-col>
+          </i-row>
+          <i-row i-class="row">
+            <i-col span="7">
+              <p>选择驾校：</p>
+            </i-col>
+            <i-col span="17">
+              <picker @change="bindPickerChange" v-model="index" range-key="schoolName" :range="schoolList">
+                <div class="inp">
+                  <input type="text" :value="schoolList[index].schoolName" disabled placeholder="请选择驾校">
+                  <i-icon i-class="icon" type="unfold" size="24" color="#4f4f4f" />
+                </div>
+              </picker>
+            </i-col>
+          </i-row>
+        </div>
+      </i-modal>
     </div>
 </template>
 <script>
+import { getDictValue } from '../../utils/public';
+import { getDictData } from '../../utils/util'
     export default {
       data () {
         return {
+          studentId:"",
           sex:"",
           time:"",
+          documentedTime:"",
           coursedCount:"",
           partTwoHours:"",
           partThreeHours:"",
@@ -254,16 +212,131 @@
           classtime:'',
           send:'',
           isModal:false,
+          bindModal:false,
+          schoolAdress:"", // 归属驾校
+          index:0,
+          classId:"",
+          classTitle:"",
+          schoolList:[],
+          listData:[],
+          km1Status:"",
+          km2Status:"",
+          km3Status:"",
+          km4Status:"",
+          km1Value:"",
+          km2Value:"",
+          km3Value:"",
+          km4Value:"",
+          tenantId:"",
+          studentType:"",
+          isSchool:true // 是否显示驾校
         }
       },
-      onShow(){
-        this.getToken();
-      },
       onLoad(){
-        this.getQuery();
-        // this.getPhone();
+        this.schoolList = wx.getStorageSync('schoolList') || [];
+        this.studentType = wx.getStorageSync('type') || '';
+        if(this.studentType==''){
+          const url = '/pages/newLogin/main';
+          wx.reLaunch({url:url});
+        }else if(this.studentType=="student_not_found"){
+          this.isSchool = false;
+        }else {
+          var myDate = new Date();
+          var year =  myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+          var month =  myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
+          var day =  myDate.getDate();        //获取当前日(1-31)
+          this.time = `${year}-${month}-${day}`;
+          this.studentId = wx.getStorageSync('studentId');
+          getDictData().then(( dictionary )=>{
+            var that = this;
+            that.listData = dictionary;
+          })
+          this.getSchool();
+          this.getQueryAll();
+        }
+      },
+      computed:{
+        classValue(){
+          if(this.classId){
+            this.$httpWX.post({
+              url:this.$api.classType.query,
+              data:{
+                params:{
+                  id:this.classId
+                }
+              }
+            }).then(res=>{
+              this.classTitle = res.data.title;
+            })
+          }
+        }
       },
       methods: {
+        getSchool(){
+          this.$httpWX.post({
+            url:this.$api.school.query,
+            data:{
+              params:{
+                mobile:wx.getStorageSync('mobile')
+              }
+            }
+          }).then(res=>{
+            console.log(res);
+            this.schoolList = res.data.list;
+            this.schoolAdress = this.schoolList[0].schoolName;
+          })
+        },
+        getQueryAll(){
+          this.$httpWX.post({
+            url:this.$api.public.studentDetail,
+            data:{
+
+            }
+          }).then(res=>{
+            console.log(res);
+            let data = res.data;
+            this.coursedCount = data.km2Lessons+data.km3Lessons;
+            this.name = data.name;
+            let documentedTime = data.documentedTime;
+            var newDate=/\d{4}-\d{1,2}-\d{1,2}/g.exec(documentedTime)
+            this.documentedTime = newDate[0];
+            console.log(this.documentedTime,this.time);
+            this.betweenDays = this.DateMinus(this.documentedTime,this.time);
+            this.type = data.licenseType;
+            this.classTypeName = data.classTitle;
+            this.classId = data.classId;
+            this.partTwoHours = data.km2Surplus;
+            this.partThreeHours = data.km3Surplus;
+            this.km1Status = data.km1Status;
+            this.km2Status = data.km2Status;
+            this.km3Status = data.km3Status;
+            this.km4Status = data.km4Status;
+            this.km1Value = getDictValue(this.listData,'km_status',data.km1Status);
+            this.km2Value = getDictValue(this.listData,'km_status',data.km2Status);
+            this.km3Value = getDictValue(this.listData,'km_status',data.km3Status);
+            this.km4Value = getDictValue(this.listData,'km_status',data.km4Status);
+          })
+        },
+      //   DateMinus(date1,date2){//date1:小日期   date2:大日期
+      //   　　var sdate = new Date(date1); 
+      //   　　var now = new Date(date2); 
+      //   　　var days = now.getTime() - sdate.getTime(); 
+      //   　　var day = parseInt(days / (1000 * 60 * 60 * 24)); 
+      //   　　return day; 
+      //   },
+      DateMinus(startTime,endTime) {
+          //日期格式化
+          var start_date = new Date(startTime.replace(/-/g, "/"));
+          var end_date = new Date(endTime.replace(/-/g, "/"));
+          console.log(start_date,end_date);
+          //转成毫秒数，两个日期相减
+          var days = end_date.getTime() - start_date.getTime();
+          //转换成天数
+          var day = parseInt(days / (1000 * 60 * 60 * 24));
+          //do something
+          console.log("day = ", day);
+          return day;
+     },
          // 校验token
         getToken(){
           let token = wx.getStorageSync('token');
@@ -292,58 +365,6 @@
             }
           })
         },
-        getQuery(){
-          this.$httpWX.get({
-            url: this.$api.public.me + "/"+wx.getStorageSync('studentId'),
-            data:{
-
-            }
-          }).then(res=>{
-            console.log(res);
-            let departmentCode = res.content.student.departmentCode;
-            let reportId = res.content.student.report.id;
-            let userId = wx.getStorageSync("studentId");
-            let employee = res.content.employee;
-            let partThreeCoach = res.content.partThreeCoach;
-
-            this.partTwoStatus = res.content.student.partTwoStatus; // 科目二状态
-            this.partThreeStatus = res.content.student.partThreeStatus;  // 科目三状态
-            if(this.partTwoStatus != "KM002-XXJD004" && employee == null){
-              wx.reLaunch({
-                url: "/pages/coach/main?departmentCode="+departmentCode + '&reportId='+reportId + '&userId='+userId
-              });
-            }else 
-            if(this.partThreeStatus != "KM003-XXJD003" &&  partThreeCoach == null){
-              wx.reLaunch({
-                url: "/pages/coachThree/main?departmentCode="+departmentCode + '&reportId='+reportId + '&userId='+userId
-              });
-            }
-            this.sex = res.content.student.baseInfo.sex;
-            this.name = res.content.student.baseInfo.name;
-            this.time = res.content.student.documentedTime;
-            this.coursedCount = res.content.coursedCount;
-            this.type = res.content.student.report.currentTrainingType;
-            this.classTypeName = res.content.student.classTypeName;
-            this.partTwoHours = res.content.student.finance.partTwoHours;
-            this.partThreeHours = res.content.student.finance.partThreeHours;
-            this.betweenDays = res.content.betweenDays;
-            this.partOneStatus = res.content.student.partOneStatus;
-            // this.partTwoStatus = res.content.student.partTwoStatus;
-            // this.partThreeStatus = res.content.student.partThreeStatus;
-            this.partFourStatus = res.content.student.partFourStatus;
-          })
-        },
-        // 获取客服、投诉电话
-        // getPhone(){
-        //   this.$httpWX.get({
-        //     url:"/v1/aplus-driverschool/driverSchool/detail/"+wx.getStorageSync('schoolId'),
-        //     data:{
-
-        //     }
-        //   }).then(res=>{
-        //     console.log(res);
-        //   })
-        // },
         // 客服电话
         customerPhone(){
           wx.makePhoneCall({
@@ -356,6 +377,44 @@
             phoneNumber: ''
           })
         },
+        // 更换驾校
+        replaceSchool(){
+          this.bindModal = true;
+        },
+        // 选择绑定驾校
+        bindPickerChange(e){
+          console.log(e);
+          this.index = e.mp.detail.value;
+          let tenantId = this.schoolList[this.index].tenantId;
+          this.tenantId = tenantId;
+        },
+        // 绑定驾校
+        bindSchool(){
+          this.$httpWX.post({
+            url:this.$api.school.binding,
+            data:{
+              params:{
+                uid:111,
+                studentId:108,
+                tenantId:this.tenantId
+              }
+            }
+          }).then(res=>{
+            console.log(res);
+            wx.showToast({
+              title: res.data,
+              icon: 'success',
+              duration: 1000,
+              success:()=>{
+                setTimeout(() => {
+                  var that = this;
+                  this.bindModal = false;
+                }, 1000);
+              }
+            })
+
+          })
+        },
         quitOut(){
           this.isModal = true;
           // wx.redirectTo({
@@ -364,20 +423,28 @@
           // wx.removeStorageSync('token')
         },
         // 退出登录弹框
-        getOk(){
-          wx.redirectTo({
-            url:'/pages/tLogin/main'
-          })
-          wx.removeStorageSync('token')
-          this.isModal = false;
+        getOk(i){
+          if(i==0){
+            wx.redirectTo({
+              url:'/pages/tLogin/main'
+            })
+            wx.removeStorageSync('token')
+            this.isModal = false;
+          }else if(i==1){
+            this.bindSchool();
+          }
         },
-        getCanel(){
-          this.isModal = false;
+        getCanel(i){
+          if(i==0){
+            this.isModal = false;
+          }else if(i==1){
+            this.bindModal = false;
+          }
         },
         // 班型介绍
         getRouter(){
           wx.navigateTo({
-            url:"/pages/versionType/main"
+            url:"/pages/versionType/main?classId="+this.classId
           })
         },
         inforRoute(){
@@ -395,7 +462,8 @@
      * 页面相关事件处理函数--监听用户下拉动作
      */
       onPullDownRefresh() {
-        this.getQuery();
+        this.getSchool();
+        this.getQueryAll();
         wx.stopPullDownRefresh();
       },
       /**
@@ -439,12 +507,28 @@
 }
 .header{
   width: 100%;
-	height: 124px;
+	height: 168px;
 	border-bottom-left-radius: 20rpx;
   border-bottom-right-radius: 20rpx;
 	background: #ff612c;
   color:#fff;
   font-size:14px;
+  .adressRow{
+    margin-top:20rpx;
+    font-size: 12px;
+    p{
+      line-height: 24px;
+    }
+    .btn{
+      width: 68px;
+      height: 24px;
+      margin: 0 auto;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 12px;
+      border:1rpx solid #fff;
+    }
+  }
 }
 .boxCont{
   width: 351px;
@@ -606,6 +690,31 @@
   p{
     color: #888888;
     padding: 15rpx 0;
+  }
+  .boxRow{
+    text-align: left;
+    padding: 20rpx 0;
+    .row{
+      padding: 0 30px;
+      p{
+        font-size: 14px;
+        span{
+          color:#4f4f4f;
+        }
+      }
+      .inp{
+        overflow: hidden;
+        input{
+          margin-top: 13rpx;
+          color:#4f4f4f;
+          float: left;
+        }
+        .icon{
+          margin-top: 10rpx;
+        }
+
+      }
+    }
   }
 }
 

@@ -25,34 +25,39 @@
           <i-row i-class="rows">
             <i-col span="5" i-class="left">
               <p style="color: #999999;font-size: 10px;">{{v.day}}</p>
-              <p style="font-weight:bold;">{{v.trainingStartTime}}</p>
+              <p style="font-weight:bold;">{{v.startTime}}</p>
               <!-- <p style="transform: rotate(-90deg);">-</p> -->
               <p style="font-weight:bold;">|</p>
-              <p style="font-weight:bold;">{{v.trainingEndTime}}</p>
+              <p style="font-weight:bold;">{{v.endTime}}</p>
             </i-col>
             <i-col span="9" i-class="center">
               <p>
                 教练：
-                <span style="font-weight:bold;">{{v.coachName}}</span>
-                <van-icon name="phone-o" size="40rpx" color="#fb6402" @click="getCall(v.coachPhone)" style="margin-left:10rpx;" />
+                <span style="font-weight:bold;">{{v.coachName || ''}}</span>
+                <van-icon name="phone-o" size="40rpx" color="#fb6402" @click="getCall(v.coachMobile)" style="margin-left:10rpx;" />
               </p>
               <p>
                 车辆：
-                <span style="font-weight:bold;">{{v.coach.carLicenceNum==null?'无':v.coach.carLicenceNum}}</span>
+                <!-- <span style="font-weight:bold;">{{v.coach.carLicenceNum==null?'无':v.coach.carLicenceNum}}</span> -->
               </p>
               <p>
                 科目：
-                <span style="font-weight:bold;">{{v.course.subjectCode=='KM003'?'科目三':'科目二'}}</span>
+                  <!-- <km :km="v.kmCode"></km> -->
+                <span style="font-weight:bold;">{{v.kmValue}}</span>
               </p>
               <p>
                 学员：
-                <span style="font-weight:bold;">{{v.course.bookedNum+'/'+ v.course.bookEnableNum}}</span>
+                <!-- <span style="font-weight:bold;">{{v.course.bookedNum+'/'+ v.course.bookEnableNum}}</span> -->
               </p>
             </i-col>
             <i-col span="8" i-class="right">
-              <div class="boxBtn">
-                <button class="topBtn" v-if="v.status=='YKZT001'"  @click="signUp(v)"><i-icon type="task_fill" size="20" />签到</button>
-                <button class="btn" v-if="v.status=='YKZT002'"><i-icon type="task_fill" size="20" />待确认</button>
+              <div class="boxBtn boxBtn_wrap" v-if="v.signStatus==0">
+                <button class="topBtn" @click="signUp(v)"><i-icon type="task_fill" size="20" />签到</button>
+                <button class="cancelBtn" @click="quietOrder(v)"><i-icon type="close" size="16" color="#9d9d9d;" i-class="cancel-icon" />取消预约</button>
+              </div>
+              <div class="boxBtn" v-else>
+                <!-- <button class="topBtn" v-if="v.signStatus==0"  @click="signUp(v)"><i-icon type="task_fill" size="20" />签到</button> -->
+                <button class="btn" v-if="v.signStatus==1"><i-icon type="task_fill" size="20" />待确认</button>
                 <button class="btnActive" v-if="v.status=='YKZT004'"><i-icon type="right" size="20" color="#fff" />已完成</button>
               </div>
             </i-col>
@@ -109,33 +114,33 @@
 
          <div class="rowWrap"  v-for="(v,i) in lastclass"  :key="i">
            <div style="text-align:center;color:#fb6402;font-size: 12px;margin-bottom:-20px;padding-top:10px;">
-             {{v.trainingDate}}{{v.day}}
+             {{v.courseDate}}{{v.day}}
            </div>
           <i-row i-class="rows">
             <i-col span="5" i-class="left">
               <p style="color: #999999;font-size: 10px;">{{v.dayType}}</p>
-              <p style="font-weight:bold;">{{v.trainingStartTime}}</p>
+              <p style="font-weight:bold;">{{v.startTime}}</p>
               <!-- <p style="transform: rotate(-90deg);">-</p> -->
               <p style="font-weight:bold;">|</p>
-              <p style="font-weight:bold;">{{v.trainingEndTime}}</p>
+              <p style="font-weight:bold;">{{v.endTime}}</p>
             </i-col>
             <i-col span="9" i-class="center">
               <p>
                 教练：
                 <span style="font-weight:bold;">{{v.coachName}}</span>
-                <van-icon name="phone-o" size="40rpx" color="#fb6402" @click="getCall(v.coachPhone)" style="margin-left:10rpx;" />
+                <van-icon name="phone-o" size="40rpx" color="#fb6402" @click="getCall(v.coachMobile)" style="margin-left:10rpx;" />
               </p>
               <p>
                 车辆：
-                <span style="font-weight:bold;">{{v.coach.carLicenceNum==null?'无':v.coach.carLicenceNum}}</span>
+                <!-- <span style="font-weight:bold;">{{v.coach.carLicenceNum==null?'无':v.coach.carLicenceNum}}</span> -->
               </p>
               <p>
                 科目：
-                <span  style="font-weight:bold;">{{v.subjectCode=="KM002"?'科目二':'科目三'}}</span>
+                <span  style="font-weight:bold;">{{v.kmValue}}</span>
               </p>
               <p>
                 学员：
-                <span style="font-weight:bold;">{{v.course.bookedNum+'/'+ v.course.bookEnableNum}}</span>
+                <!-- <span style="font-weight:bold;">{{v.course.bookedNum+'/'+ v.course.bookEnableNum}}</span> -->
               </p>
             </i-col>
             <i-col span="8" i-class="right">
@@ -188,44 +193,12 @@
             </div>
             <h3>确认要取消预约以上课程吗？</h3>
         </i-modal>
-
-        <!-- <i-row>
-          <view class="card-box" v-for="(v,i) in lastclass"  :key="i" i-class="cardBottom">
-            <div class="box-heard">
-              <i-row>
-                <i-col span="12"><div>{{v.trainingStartTime+'-'+ v.trainingEndTime}}</div></i-col>
-                <i-col span="6"><div class="word_right">{{v.trainingDate}}</div></i-col>
-                <i-col span="6"><div class="word_right">{{v.day}}</div></i-col>
-              </i-row>
-            </div>
-              <view class="detail">
-                <i-col span="16" i-class="textPadding">
-                  <i-col span="12">
-                    <view>
-                      <text class="titleName">教练：</text><text>{{v.coachName}}</text>
-                    </view>
-                    <view>
-                    <text class="titleName">车辆：</text>{{v.coach.carLicenceNum==null?'无':v.coach.carLicenceNum}}<text></text>                
-                    </view>
-                  </i-col>
-                  <i-col span="12">
-                    <view>
-                      <text class="titleName">科目：</text><text>{{v.subjectCode=="KM002"?'科目二':'科目三'}}</text>
-                    </view>
-                    <view>
-                      <text class="titleName">学员：</text><text>{{v.course.bookedNum+'/'+ v.course.bookEnableNum}}</text>
-                    </view>
-                  </i-col>
-                </i-col>
-                <i-col span="8" i-class="textPadding">
-                  <div class="btnDivs" @click="getCall(v.coachPhone)">
-                    <i class="iconfont icon-keyueyemian-lianxi" style="font-size:30px;"></i>
-                  </div>
-                  <div class="btnDiv btnDiv_last" @click="quietOrder(v.id)"><span>取消</span></div>
-                </i-col>
-              </view>
+        <!-- 不是学员 -->
+        <i-modal i-class="modal" :visible="typeModal" :show-ok="false" :show-cancel="false">
+          <view>
+            <p>您还未报名学车！</p>
           </view>
-        </i-row> -->
+        </i-modal>
       </div>
       <div class="show" v-if="false">
         <img src="../../../static/images/car01.png" alt="">
@@ -234,49 +207,28 @@
     </div>
 </template>
 <script>
+import km from '../../components/km'
+import {getDictValue} from '../../utils/public'
+import { getDictData } from '../../utils/util'
     export default {
+      components:{
+        km
+      },
+      filters:{
+        fliterKM:function (value){
+          console.log(value,'111111')
+          return value + '1212';
+        }
+      },
       data () {
         return {
+          studentId:"",
           navbar:[],
           studentId:wx.getStorageSync("studentId"),
           today_hours:0,
           after_hours:0,
-          todayclass:[
-            // {
-            //   trainingDate:'',
-            //   trainingStartTime:'',
-            //   trainingEndTime:'',
-            //   coachName:'',
-            //   studentName:'',
-            //   status:'',
-            //   hours:'',
-            //   coach:{
-            //     carLicenceNum:''
-            //   },
-            //   course:{
-            //     bookedNum:'',     
-            //     bookEnableNum:''
-            //   }
-            // }
-          ],
-            lastclass:[
-              // {
-              //   trainingDate:'',
-              //   trainingStartTime:'',
-              //   trainingEndTime:'',
-              //   coachName:'',
-              //   studentName:'',
-              //   status:'',
-              //   hours:'',
-              //   coach:{
-              //   carLicenceNum:''
-              // },
-              //   course:{
-              //   bookedNum:'',
-              //   bookEnableNum:''
-              //  }
-              // }
-            ],
+          todayclass:[],
+            lastclass:[],
             date:[],
             visible1:false,
             id:"",
@@ -287,20 +239,46 @@
             days:"",
             isModal:false,
             partTwoStatus:"",
-            partThreeStatus:""
+            partThreeStatus:"",
+            params:{
+            },
+            pagination:{
+              current:1,
+              pageSize:18
+            },
+            dateParams:"",
+            list:"",
+            type:"",
+            typeModal:false
         }
       },
       /**
      * 生命周期函数--监听页面显示
      */
       onShow: function () {
-        this.getToken();
+        // this.getToken();
         this.today_hours = 0;
         this.after_hours = 0;
         this.studentId = wx.getStorageSync("studentId");
-        this.getDatas();
+        // this.getDatas();
+        if(this.studentId){
+          this.getQueryDays();
+          this.get2QueryDays();
+        }
       },
       onLoad(){
+        this.type = wx.getStorageSync('type') || '';
+        if(this.type==''){
+          const url = '/pages/newLogin/main';
+          wx.reLaunch({url:url});
+        }else if(this.type=='student_not_found'){
+          this.typeModal = true;
+        }
+        this.studentId = wx.getStorageSync('studentId');
+        getDictData().then(( dictionary )=>{
+          var that = this;
+          that.list = dictionary;
+        })
         var myDate = new Date();
         var year =  myDate.getFullYear();    //获取完整的年份(4位,1970-????)
         var month =  myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
@@ -308,20 +286,75 @@
         var day1 = myDate.getDay();
         var weekday=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
         console.log("今天是：" + weekday[day1]);
+        this.dateParams = `${year}-${month}-${day}`
         this.date = `${year}年${month}月${day}日`
         this.day = weekday[day1];
         console.log(this.date);
         this.today_hours = 0;
         this.after_hours = 0;
         this.studentId = wx.getStorageSync("studentId");
-        this.getApime();
-        this.getDatas();
-      },
-      created() {
-        console.log('doudou')
-       // this.getDatas();
+        // this.getApime();
+        // this.getDatas();
+        if(this.studentId){
+          this.getQueryDays();
+          this.get2QueryDays();
+        }
       },
       methods: {
+        getQueryDays(){
+          this.params = {
+            courseDate:this.dateParams,
+            studentId:this.studentId,
+            recordStatus:1
+          }
+          this.$httpWX.post({
+            url:this.$api.al.already,
+            data:{
+              params:this.params,
+              pagination:this.pagination
+            }
+          }).then(res=>{
+            this.todayclass = res.data.list;
+            this.todayclass.forEach(item=>{
+              var dd = getDictValue(this.list,"km",item.kmCode);
+              this.$set(item,'kmValue',dd);
+              this.$set(item,'day',item.startTime.slice(0,2)<12?'上午':'下午')
+            })
+            console.log(this.todayclass);
+            this.today_hours = this.todayclass.length;
+          })
+        },
+        get2QueryDays(){
+          var myDate = new Date();
+          var year =  myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+          var month =  myDate.getMonth()+1;       //获取当前月份(0-11,0代表1月)
+          var day =  myDate.getDate()+1;        //获取当前日(1-31)
+          var date = `${year}-${month}-${day}`;
+          this.params = {
+            startDate:date,
+            studentId:this.studentId,
+            recordStatus:1
+          }
+          this.$httpWX.post({
+            url:this.$api.al.already,
+            data:{
+              params:this.params,
+              pagination:this.pagination
+            }
+          }).then((res)=>{
+            this.lastclass = res.data.list;
+            this.lastclass.forEach(item=>{
+              var dd = getDictValue(this.list,"km",item.kmCode);
+              this.$set(item,'kmValue',dd);
+              this.$set(item,'dayType',item.startTime.slice(0,2)<12?'上午':'下午')
+              var items = item.courseDate;
+              var weekDay = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];  
+              var myDate = new Date(Date.parse(items));
+              this.$set(item,'day',weekDay[myDate.getDay()])
+            })
+            this.after_hours = this.lastclass.length;
+          })
+        },
         goCancel(v){
           if(v=='0'){
             this.visible1 = false;
@@ -397,10 +430,10 @@
          this.todayclass =  res.content.todayRecord;
          this.lastclass =  res.content.afterRecord;
          this.todayclass.forEach(item=>{
-           this.$set(item,'day',item.trainingStartTime.slice(0,2)<12?'上午':'下午')
+           this.$set(item,'day',item.startTime.slice(0,2)<12?'上午':'下午')
          })
          this.lastclass.forEach(item=>{
-           this.$set(item,'dayType',item.trainingStartTime.slice(0,2)<12?'上午':'下午')
+           this.$set(item,'dayType',item.startTime.slice(0,2)<12?'上午':'下午')
          })
          this.lastclass.forEach(item=>{
           //  console.log(item.trainingDate);
@@ -424,45 +457,42 @@
         });
         },
         signUp(item){
+          console.log(item);
           this.id = item.id;
-          this.startTime = item.trainingStartTime;
-          this.days = item.trainingStartTime.slice(0,2)<12?'上午':'下午';
-          this.endTime = item.trainingEndTime;
-          this.subjectCode = item.course.subjectCode=='KM003'?'科目三':'科目二';
+          this.startTime = item.startTime;
+          this.days = item.courseDate.slice(0,2)<12?'上午':'下午';
+          this.endTime = item.endTime;
+          this.subjectCode = item.kmValue;
           this.visible1 = true;
         },
         goConfirm(){
            this.$httpWX.post({
             url: this.$api.already.sign,
             data: {
-              courseRecordId: this.id,
-              userType: "student"
+              params:{
+                id:this.id,
+                signStatus:1
+              }
             }
           })
         .then(res => {
           this.visible1 = false;
-          if(res.status.code=='10'){
+          if(res.code==0){
             setTimeout( () => {
               wx.showToast({
-                title: res.status.message,
+                title: res.data,
                 icon: "none",
               });
               setTimeout( () =>{
                 wx.hideToast();  
               },2000)
             },10);
-            //   wx.showToast({
-            //     title: res.status.message,
-            //     icon: 'succes',
-            //     duration: 2000,
-            //     mask:true
-            // })
-             this.getDatas();//重新加载数据
+             this.getQueryDays();//重新加载数据
           }else{
             this.visible1 = false;
             setTimeout( () => {
               wx.showToast({
-                title: res.status.message,
+                title: res.data,
                 icon: "none",
               });
               setTimeout( () =>{
@@ -475,47 +505,48 @@
             //     duration: 2000,
             //     mask:true
             // })
-            this.getDatas();//重新加载数据
+            this.getQueryDays(); //重新加载数据
           }
         });
         },
         quietOrder(item){
           this.id = item.id;
-          this.date = item.trainingDate;
-          this.startTime = item.trainingStartTime;
-          this.days = item.trainingStartTime.slice(0,2)<12?'上午':'下午';
-          this.endTime = item.trainingEndTime;
-          this.subjectCode = item.course.subjectCode=='KM003'?'科目三':'科目二';
+          this.studentId = item.studentId;
+          this.date = item.courseDate;
+          this.startTime = item.startTime;
+          this.days = item.startTime.slice(0,2)<12?'上午':'下午';
+          this.endTime = item.endTime;
+          this.subjectCode = item.kmCode;
           this.isModal = true;
         },
         getCancelQuite(){
-           this.$httpWX.get({
-            url: this.$api.already.cancel+"/"+this.id,
+           this.$httpWX.post({
+            url: this.$api.already.cancel,
             data: {
-              // id: ids,
+              params:{
+                id:this.id,
+                studentId:this.studentId
+              }
             }
           })
         .then(res => {
           console.log(res);
           this.isModal = false;
-          //  wx.showToast({
-          //     title: res.status.message,
-          //     icon: 'succes',
-          //     duration: 1000,
-          //     mask:true
-          // });
           wx.showLoading();
           wx.hideLoading();
           setTimeout( () => {
             wx.showToast({
-              title: res.status.message,
+              title: res.data,
               icon: "none",
             });
             setTimeout( () =>{
               wx.hideToast();  
             },2000)
           },0);
-          this.getDatas();//重新加载数据
+          if(res.code == 0){
+            this.getQueryDays();//重新加载数据
+            this.get2QueryDays();
+          }
         });
         },
         getCall(phone){
@@ -536,7 +567,8 @@
       onPullDownRefresh() {
         this.today_hours = 0;
         this.after_hours = 0;
-        this.getDatas();
+        this.getQueryDays();
+        this.get2QueryDays();
         wx.stopPullDownRefresh();
       },
       /**
@@ -640,6 +672,9 @@
       }
     }
     .right{
+      .boxBtn_wrap{
+        padding: 0!important;
+      }
       .boxBtn{
         padding:44rpx 0;
         margin-left:40rpx;

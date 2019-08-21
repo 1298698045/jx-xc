@@ -13,14 +13,14 @@
                 </h3>
                 <div class="box">
                   <div class="boxWrap">
-                      <div class="left">
+                      <!-- <div class="left">
                           班级编号：<span>{{classInfo.classCode}}</span>
+                      </div> -->
+                      <div >
+                          班型名称：<span style="color: #3b3b3b;">{{classInfo.title}}</span>
                       </div>
-                      <div class="left">
-                          班型名称：<span>{{classInfo.className}}</span>
-                      </div>
-                      <div class="left">
-                          分配模式：<span>{{classInfo.pattern}}</span>
+                      <div>
+                          分配模式：<span style="color: #3b3b3b;">{{classInfo.matchMode}}</span>
                       </div>
                   </div>
                 </div>
@@ -31,30 +31,30 @@
                 <div class="boxs">
                   
                   <p class="ps">
-                    <i-con type="addressbook_fill" size="28" color="#fb731b" v-if="classInfo.valueAddedServicesStr!=null" />
-                    {{classInfo.valueAddedServicesStr==null?'':classInfo.valueAddedServicesStr}}</p>
+                    <!-- {{classInfo.valueAddedServicesStr==null?'':classInfo.valueAddedServicesStr}} -->
+                    <incrementServer :increment="classInfo.valueAdded"></incrementServer>
+                  </p>
                 </div>
                 <!-- <i-panel i-class="boxWrap" title="约课规则"></i-panel> -->
-                <h3>
-                  <!-- <span>|</span> -->
+                <!-- <h3>
                   关联课时
                 </h3>
                 <div class="box">
                   <p class="ps active" v-for="(item,i) in arr" :key="i">
                     <span>{{item}}</span>
                   </p>
-                </div>
+                </div> -->
                 <h3>
                     <!-- <span>|</span> -->
                     约课规则
                 </h3>
                 <div class="box">
                     <ul>
-                        <li>允许预约日：<span>{{classInfo.allow_days=='0'?'周末':classInfo.allow_days=='1'?'周一至周日':classInfo.allow_days=='2'?'周一至周五':''}}</span></li>
-                        <li>学员上限/车：<span>{{classInfo.userCount}}</span></li>
-                        <li>提前预约天数：<span>{{classInfo.pre_days}}</span></li>
-                        <li>单日最长学时课时：<span>{{classInfo.hours}}</span></li>
-                        <li style="display:flex;flex: 1"><i style="display:block;width:65px">取消规则：</i><div><span>课程开始前{{classInfo.dis_hours==null?0:classInfo.dis_hours}}小时内禁止取消</span><br><span>预约成功后{{classInfo.dis_pre==null?0:classInfo.dis_pre}}小时内禁止取消</span></div></li>
+                        <li>允许预约日：<span>{{classInfo.allowDays}}</span></li>
+                        <li>学员上限/车：<span>{{classInfo.bookNum}}</span></li>
+                        <li>提前预约天数：<span>{{classInfo.preDays}}</span></li>
+                        <li>单日最长学时课时：<span>{{classInfo.lessonsPerDay}}</span></li>
+                        <li style="display:flex;flex: 1"><i style="display:block;width:65px">取消规则：</i><div><span>课程开始前{{classInfo.noncancelableBefore}}小时内禁止取消</span><br><span>预约成功后{{classInfo.noncancelableIn}}小时内禁止取消</span></div></li>
                     </ul>
                 </div>
                 <!-- <i-panel i-class="boxWrap" title="班型介绍"></i-panel> -->
@@ -70,7 +70,13 @@
     </div>
 </template>
 <script>
+import { getDictValue } from '../../utils/public';
+import { getDictData } from '../../utils/util'
+import incrementServer from '../../components/incrementServer'
 export default {
+  components:{
+    incrementServer
+  },
   data() {
     return {
       interval:"",
@@ -90,30 +96,41 @@ export default {
           content:
             "许预约日：周一至周日允许预约日：周一至周日允许预约日：周一至周日允许预约许预约日：周一至周日允许预约日：周一至周日允许预约日：周一至周日允许预约"
         },
-        arr:[]
+        arr:[],
+        listData:[],
+        classId:""
       
     };
   },
-  onLoad(){
+  onLoad(options){
+    this.classId = options.classId;
+    getDictData().then(( dictionary )=>{
+      var that = this;
+      that.listData = dictionary;
+    })
     this.getQuery();
   },
   methods: {
     getQuery(){
-      this.$httpWX.get({
-        url: this.$api.my.classtype + "/" +wx.getStorageSync('classTypeId'),
+      this.$httpWX.post({
+        url: this.$api.classType.query,
         data:{
-
+          params:{
+            id:this.classId
+          }
         }
       }).then(res=>{
         console.log(res);
-        this.classInfo = res.content;
-        var str = this.classInfo.timeInterval.overtimeInterval.split(",");
-        var arr = this.classInfo.timeInterval.interval.split(",");
-        this.arr = arr.concat(str);
-        console.log(this.arr);
-        // this.overtimeInterval = this.classInfo.timeInterval.overtimeInterval.replace(/,/g,'/');
-        // this.interval = this.classInfo.timeInterval.interval.replace(/,/g,'/')
-        // console.log(this.classInfo.timeInterval.interval.replace(/,/g,'/'))
+        this.classInfo = res.data;
+        var allowDays = getDictValue(this.listData,'week_day',this.classInfo.allowDays);
+        var matchMode = getDictValue(this.listData,'match_mode',this.classInfo.matchMode);
+        this.classInfo.matchMode = matchMode;
+        console.log('al',allowDays);
+        this.classInfo.allowDays = allowDays;
+        // var str = this.classInfo.timeInterval.overtimeInterval.split(",");
+        // var arr = this.classInfo.timeInterval.interval.split(",");
+        // this.arr = arr.concat(str);
+        // console.log(this.arr);
       })
     }
   }

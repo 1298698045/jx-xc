@@ -8,6 +8,7 @@
      "i-card": "/static/view/card/index",
      "i-icon": "/static/view/icon/index",
      "i-tag": "/static/view/tag/index",
-     "i-modal":"/static/view/modal/index"
+     "i-modal":"/static/view/modal/index",
+     "i-input":"/static/view/input/index"
 }
 }
